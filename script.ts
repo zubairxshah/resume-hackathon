@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('resumeForm') as HTMLFormElement;
     
+    // Add event listeners for the new "Add More" buttons
+    const addEducationBtn = document.getElementById('addEducation') as HTMLButtonElement;
+    const addExperienceBtn = document.getElementById('addExperience') as HTMLButtonElement;
+    const addSkillsBtn = document.getElementById('addSkills') as HTMLButtonElement;
+
+    addEducationBtn?.addEventListener('click', () => addNewEntry('educationEntries', 'education'));
+    addExperienceBtn?.addEventListener('click', () => addNewEntry('experienceEntries', 'experience'));
+    addSkillsBtn?.addEventListener('click', () => addNewEntry('skillsEntries', 'skills'));
+
     form?.addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -9,20 +18,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const emailElement = document.getElementById('email') as HTMLInputElement;
         const contactnoElement = document.getElementById('contactno') as HTMLInputElement;
         const addressElement = document.getElementById('address') as HTMLInputElement;
-        const educationElement = document.getElementById('education') as HTMLTextAreaElement;
-        const experienceElement = document.getElementById('experience') as HTMLTextAreaElement;
-        const skillsElement = document.getElementById('skills') as HTMLTextAreaElement;
         const profilePictureInput = document.getElementById('profilepicture') as HTMLInputElement;
 
-        if (nameElement && emailElement && contactnoElement && addressElement && educationElement && experienceElement && skillsElement) {
+        if (nameElement && emailElement && contactnoElement && addressElement) {
             const formData = new URLSearchParams();
             formData.append('name', nameElement.value);
             formData.append('email', emailElement.value);
             formData.append('contactno', contactnoElement.value);
             formData.append('address', addressElement.value);
-            formData.append('education', educationElement.value);
-            formData.append('experience', experienceElement.value);
-            formData.append('skills', skillsElement.value);
+
+            // Handle multiple entries for education, experience, and skills
+            formData.append('education', JSON.stringify(getInputValues('educationEntries')));
+            formData.append('experience', JSON.stringify(getInputValues('experienceEntries')));
+            formData.append('skills', JSON.stringify(getInputValues('skillsEntries')));
 
             // Handle profile picture
             const profilePictureFile = profilePictureInput.files?.[0];
@@ -44,6 +52,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function addNewEntry(containerId: string, inputName: string) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        const newEntry = document.createElement('div');
+        newEntry.className = `${inputName}-entry`;
+        newEntry.innerHTML = `
+            <label for="${inputName}">${inputName.charAt(0).toUpperCase() + inputName.slice(1)}</label>
+            <input name="${inputName}" type="text" required>
+        `;
+        container.appendChild(newEntry);
+    }
+}
+
+function getInputValues(containerId: string): string[] {
+    const container = document.getElementById(containerId);
+    if (container) {
+        const inputs = container.querySelectorAll('input');
+        return Array.prototype.slice.call(inputs).map((input: HTMLInputElement) => input.value);
+    }
+    return [];
+}
 
 function redirectToResumePage(formData: URLSearchParams) {
     const queryString = formData.toString();

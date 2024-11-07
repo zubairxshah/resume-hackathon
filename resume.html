@@ -5,27 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="resume-styles.css">
     <title>Professional Resume</title>
-    
 </head>
 <body>
-    <div id="resume-container">
+    <div class="resume-styles">
         <h2>Professional Resume</h2>
         <img id="profilePicture" alt="Profile Picture" class="profilePicture">
-        <p><strong>Name:</strong> <span id="name" class="editable"></p>
-        <p><strong>Email:</strong> <span id="email" class="editable"></p>
-        <p><strong>Contact No:</strong> <span id="contactNo" class="editable"></p>
-        <p><strong>Address:</strong> <span id="address" class="editable"></p>
+        <div class="content-wrapper">
+            <div class="left-column">
+                <p><strong>Name:</strong> <span id="name" class="editable"></p>
+                <p><strong>Email:</strong> <span id="email" class="editable"></p>
+                <p><strong>Contact No:</strong> <span id="contactNo" class="editable"></p>
+                <p><strong>Address:</strong> <span id="address" class="editable"></p>
+            </div>
+            <div class="right-column">
+                <h3>Education</h3>
+                <div id="education" class="editable"></div>
 
-        <h3>Education</h3>
-        <p id="education" class="editable"></p>
+                <h3>Experience</h3>
+                <div id="experience" class="editable"></div>
 
-        <h3>Experience</h3>
-        <p id="experience" class="editable"></p>
-
-        <h3>Skills</h3>
-        <p id="skills" class="editable"></p>
-
-        <button id="downloadButton">Download Resume as PDF</button>
+                <h3>Skills</h3>
+                <div id="skills" class="editable"></div>
+            </div>
+        </div>
+        <div class="btn-create">
+            <button id="downloadButton">Download PDF</button>
+            <button class="btn-share" id="shareButton">Share Resume</button>
+        </div>
+        
     </div>
     <script src="resume.js"></script>
 </body>

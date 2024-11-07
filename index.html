@@ -28,21 +28,36 @@
 
         <fieldset>
             <legend>Education</legend>
-            <label for="Education">Education</label>
-            <textarea name="education" id="education" rows="4"></textarea><br>
+            <div id="educationEntries">
+                <div class="education-entry">
+                    <label for="Education">Education</label>
+                    <input name="education" id="education" type="text" required>
+                </div>
+            </div>
+            <button type="button" id="addEducation">Add More Education</button>
         </fieldset>
 
         <fieldset>
             <legend>Experience</legend>
-            <label for="Experience">Experience</label>
-            <textarea name="experience" id="experience" rows="4"></textarea><br>
+            <div id="experienceEntries">
+                <div class="experience-entry">
+                    <label for="Experience">Experience</label>
+                    <input name="experience" id="experience" type="text" required>
+                </div>
+            </div>
+            <button type="button" id="addExperience">Add More Experience</button>
         </fieldset>
 
-        <fieldset>
-            <legend>Skills</legend>
+       <fieldset>
+    <legend>Skills</legend>
+    <div id="skillsEntries">
+        <div class="skills-entry">
             <label for="Skills">Skills</label>
-            <textarea name="skills" id="skills" rows="4"></textarea><br>
-        </fieldset>
+            <input name="skills" id="skills" type="text" required>
+        </div>
+    </div>
+    <button type="button" id="addSkills">Add More Skills</button>
+</fieldset>
      
          
         <button class="button_create" type="submit">CREATE RESUME</button>
@@ -50,7 +65,7 @@
 
     <div id="resumeoutput">
 
-        <!---Resume will be generated below-->
+    <!--Moving to In-line editor-->
     </div>
     <script src="script.js"> </script>
 </body>
