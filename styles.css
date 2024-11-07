@@ -1,0 +1,110 @@
+
+body {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    margin: 20px;
+    padding: 0;
+    background-color: rgb(238, 230, 156);
+}
+h1 {
+    text-align: center;
+    color: rgb(14, 14, 143);
+}
+form {
+    max-width: 600px;
+    margin: auto;
+    background-color: rgb(209, 206, 206);
+    border-radius: 8px;
+    box-shadow: 0px 8px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+}
+
+fieldset {
+    border: 2px solid gray;
+     border-radius: 8px;
+     padding: 26px;
+     margin-bottom: 20px;
+     background-color: rgb(218, 181, 218);
+}
+legend {
+    font-weight: bold;
+    text-align: left;
+    color: rgb(68, 8, 68);
+
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    color: rgb(182, 13, 182);
+}
+input, textarea {
+    width: calc(100% -15px);
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid rgb(24, 71, 158);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: rgb(233, 147, 60);
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button:havor {
+    background-color: sandybrown;
+}
+profilepicture{
+    display: bold;
+    margin: 0 auto;
+    border: 2px solid rgb(107, 107, 136);
+    box-shadow: 0 4px 8px rgba(11,7, 211, 0.5);
+    border-radius: 500%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+
+}
+#resumeoutput {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 2px solid #787878;
+    border-radius: 8px;
+    background-color: aliceblue;
+    box-shadow: 0 4px 8px rgba(11,7, 211, 0.5);
+
+}
+
+#resumeoutput h2 {
+    color: burlywood;
+}
+
+@media print {
+    body {
+        width: 21cm;
+        height: 29.7cm;
+        margin: 30mm 45mm 30mm 45mm;
+    }
+}
+.button_create{
+    display: block;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: rgb(75, 187, 112);
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}

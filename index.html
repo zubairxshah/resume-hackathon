@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" class="html"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-Line Resume Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Create Dynamic Resume with In-line Editor</h1>
+    <form id="resumeForm">
+
+        <fieldset>
+
+            <legend>Personal Information</legend>
+
+            <label for="profilepicture">Profile Picture</label>
+            <input type="file" id="profilepicture" name="profilepicture" accept="image/*" required>
+            <label for="name">Name: </label>
+            <input type="text" id="name" name="name" required><br>
+            <label for="email">Email : </label>
+            <input type="email" id="email" name="email" required>
+            <label for="contact no.">Contact No.: </label>
+            <input type="contact no." id="contactno" name="contact no." required>
+            <label for="address">Address: </label>
+            <input type="address" id="address" name="address" required>
+        </fieldset>
+
+        <fieldset>
+            <legend>Education</legend>
+            <label for="Education">Education</label>
+            <textarea name="education" id="education" rows="4"></textarea><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Experience</legend>
+            <label for="Experience">Experience</label>
+            <textarea name="experience" id="experience" rows="4"></textarea><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Skills</legend>
+            <label for="Skills">Skills</label>
+            <textarea name="skills" id="skills" rows="4"></textarea><br>
+        </fieldset>
+     
+         
+        <button class="button_create" type="submit">CREATE RESUME</button>
+    </form>
+
+    <div id="resumeoutput">
+
+        <!---Resume will be generated below-->
+    </div>
+    <script src="script.js"> </script>
+</body>
+</html>
