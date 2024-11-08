@@ -235,78 +235,53 @@ function shareResume() {
     const experience = getMultiEntryContent('experience');
     const skills = getMultiEntryContent('skills');
 
-    const uniqueId = generateUniqueId(name);
-    const fileName = `${uniqueId}.html`;
+    // Get the profile picture
+    const profilePictureElement = document.getElementById('profilePicture') as HTMLImageElement;
+    const profilePicture = profilePictureElement.src;
 
-    const resumeContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${name}'s Resume</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('contactNo', contactNo);
+    formData.append('address', address);
+    formData.append('education', JSON.stringify(education));
+    formData.append('experience', JSON.stringify(experience));
+    formData.append('skills', JSON.stringify(skills));
+
+    // Convert base64 image to file
+    if (profilePicture.startsWith('data:image')) {
+        const byteString = atob(profilePicture.split(',')[1]);
+        const mimeString = profilePicture.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
         }
-        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        h2 { color: #2980b9; }
-        .section { margin-bottom: 20px; }
-    </style>
-</head>
-<body>
-    <h1>${name}'s Resume</h1>
-    <div class="section">
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Contact:</strong> ${contactNo}</p>
-        <p><strong>Address:</strong> ${address}</p>
-    </div>
-    <div class="section">
-        <h2>Education</h2>
-        ${education.map(item => `<p>${item}</p>`).join('')}
-    </div>
-    <div class="section">
-        <h2>Experience</h2>
-        ${experience.map(item => `<p>${item}</p>`).join('')}
-    </div>
-    <div class="section">
-        <h2>Skills</h2>
-        ${skills.map(item => `<p>${item}</p>`).join('')}
-    </div>
-</body>
-</html>
-    `;
+        const blob = new Blob([ab], {type: mimeString});
+        formData.append('profilePicture', blob, 'profile.jpg');
+    }
 
-    // Create a Blob with the HTML content
-    const blob = new Blob([resumeContent], { type: 'text/html' });
-
-    // Create a link to download the file
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = fileName;
-
-    // Append the link to the body, click it, and remove it
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-
-    // Create a shareable link
-    const shareableLink = `${window.location.origin}/${fileName}`;
-
-    // Show the shareable link to the user
-    alert(`Your resume has been saved as ${fileName}. You can share this link: ${shareableLink}`);
+    // Send data to server
+    fetch('/api/share-resume', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`Your resume has been shared. You can share this link: ${data.shareableLink}`);
+        } else {
+            alert(`There was an error sharing your resume: ${data.error}`);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('There was an error sharing your resume. Please try again.');
+    });
 }
 
-function generateUniqueId(name: string): string {
-    const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const timestamp = Date.now().toString(36);
-    return `${cleanName}-${timestamp}`;
-}
+
+
 
 function getMultiEntryContent(id: string): string[] {
     const element = document.getElementById(id);

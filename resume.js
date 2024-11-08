@@ -181,28 +181,47 @@ function shareResume() {
     var education = getMultiEntryContent('education');
     var experience = getMultiEntryContent('experience');
     var skills = getMultiEntryContent('skills');
-    var uniqueId = generateUniqueId(name);
-    var fileName = "".concat(uniqueId, ".html");
-    var resumeContent = "\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>".concat(name, "'s Resume</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            line-height: 1.6;\n            color: #333;\n            max-width: 800px;\n            margin: 0 auto;\n            padding: 20px;\n        }\n        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }\n        h2 { color: #2980b9; }\n        .section { margin-bottom: 20px; }\n    </style>\n</head>\n<body>\n    <h1>").concat(name, "'s Resume</h1>\n    <div class=\"section\">\n        <p><strong>Email:</strong> ").concat(email, "</p>\n        <p><strong>Contact:</strong> ").concat(contactNo, "</p>\n        <p><strong>Address:</strong> ").concat(address, "</p>\n    </div>\n    <div class=\"section\">\n        <h2>Education</h2>\n        ").concat(education.map(function (item) { return "<p>".concat(item, "</p>"); }).join(''), "\n    </div>\n    <div class=\"section\">\n        <h2>Experience</h2>\n        ").concat(experience.map(function (item) { return "<p>".concat(item, "</p>"); }).join(''), "\n    </div>\n    <div class=\"section\">\n        <h2>Skills</h2>\n        ").concat(skills.map(function (item) { return "<p>".concat(item, "</p>"); }).join(''), "\n    </div>\n</body>\n</html>\n    ");
-    // Create a Blob with the HTML content
-    var blob = new Blob([resumeContent], { type: 'text/html' });
-    // Create a link to download the file
-    var downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = fileName;
-    // Append the link to the body, click it, and remove it
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-    // Create a shareable link
-    var shareableLink = "".concat(window.location.origin, "/").concat(fileName);
-    // Show the shareable link to the user
-    alert("Your resume has been saved as ".concat(fileName, ". You can share this link: ").concat(shareableLink));
-}
-function generateUniqueId(name) {
-    var cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-    var timestamp = Date.now().toString(36);
-    return "".concat(cleanName, "-").concat(timestamp);
+    // Get the profile picture
+    var profilePictureElement = document.getElementById('profilePicture');
+    var profilePicture = profilePictureElement.src;
+    var formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('contactNo', contactNo);
+    formData.append('address', address);
+    formData.append('education', JSON.stringify(education));
+    formData.append('experience', JSON.stringify(experience));
+    formData.append('skills', JSON.stringify(skills));
+    // Convert base64 image to file
+    if (profilePicture.startsWith('data:image')) {
+        var byteString = atob(profilePicture.split(',')[1]);
+        var mimeString = profilePicture.split(',')[0].split(':')[1].split(';')[0];
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        var blob = new Blob([ab], { type: mimeString });
+        formData.append('profilePicture', blob, 'profile.jpg');
+    }
+    // Send data to server
+    fetch('/api/share-resume', {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+        if (data.success) {
+            alert("Your resume has been shared. You can share this link: ".concat(data.shareableLink));
+        }
+        else {
+            alert("There was an error sharing your resume: ".concat(data.error));
+        }
+    })
+        .catch(function (error) {
+        console.error('Error:', error);
+        alert('There was an error sharing your resume. Please try again.');
+    });
 }
 function getMultiEntryContent(id) {
     var element = document.getElementById(id);
