@@ -155,6 +155,7 @@ function setupDownloadButton() {
     }
 }
 
+// Get PDF Version
 function printResumeToPDF() {
     const printWindow = window.open('', '_blank');
     

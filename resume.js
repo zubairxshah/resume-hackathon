@@ -136,6 +136,7 @@ function setupDownloadButton() {
         downloadButton.addEventListener('click', printResumeToPDF);
     }
 }
+// Get PDF Version
 function printResumeToPDF() {
     var printWindow = window.open('', '_blank');
     if (printWindow) {
