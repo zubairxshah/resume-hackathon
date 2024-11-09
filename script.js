@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('resumeForm');
-    // Add event listeners for the new "Add More" buttons
+    // Add more btn
     var addEducationBtn = document.getElementById('addEducation');
     var addExperienceBtn = document.getElementById('addExperience');
     var addSkillsBtn = document.getElementById('addSkills');
@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
     form === null || form === void 0 ? void 0 : form.addEventListener('submit', function (event) {
         var _a;
         event.preventDefault();
-        // Type assertions
         var nameElement = document.getElementById('name');
         var emailElement = document.getElementById('email');
         var contactnoElement = document.getElementById('contactno');
@@ -22,11 +21,11 @@ document.addEventListener('DOMContentLoaded', function () {
             formData_1.append('email', emailElement.value);
             formData_1.append('contactno', contactnoElement.value);
             formData_1.append('address', addressElement.value);
-            // Handle multiple entries for education, experience, and skills
+            // entries for education, experience, and skills
             formData_1.append('education', JSON.stringify(getInputValues('educationEntries')));
             formData_1.append('experience', JSON.stringify(getInputValues('experienceEntries')));
             formData_1.append('skills', JSON.stringify(getInputValues('skillsEntries')));
-            // Handle profile picture
+            // profile image
             var profilePictureFile = (_a = profilePictureInput.files) === null || _a === void 0 ? void 0 : _a[0];
             if (profilePictureFile) {
                 var reader = new FileReader();
@@ -70,3 +69,4 @@ function redirectToResumePage(formData) {
     var queryString = formData.toString();
     window.location.href = "resume.html?".concat(queryString);
 }
+"";

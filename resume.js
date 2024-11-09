@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     populateElement('email', 'email');
     populateElement('contactNo', 'contactno');
     populateElement('address', 'address');
-    // Handle multiple entries for education, experience, and skills
+    // entries for education, experience, and skills
     var populateMultipleEntries = function (id, param) {
         var element = document.getElementById(id);
         if (element) {
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     populateMultipleEntries('education', 'education');
     populateMultipleEntries('experience', 'experience');
     populateMultipleEntries('skills', 'skills');
-    // Handle profile picture
+    // profile picture
     var profilePicture = document.getElementById('profilePicture');
     if (profilePicture) {
         var storedPicture = sessionStorage.getItem('profilePicture');
@@ -111,7 +111,7 @@ function addAddButton(element) {
         var addButton = document.createElement('button');
         addButton.textContent = 'Add Entry';
         addButton.onclick = function (e) {
-            e.stopPropagation(); // Prevent triggering the element's click event
+            e.stopPropagation();
             var newInput = addInputField(element);
             newInput.focus();
         };
@@ -127,7 +127,7 @@ function updateMultiEntryField(element) {
         .map(function (value) { return "<p>".concat(value, "</p>"); })
         .join('');
     if (entries.length === 0) {
-        element.innerHTML = '<p></p>'; // Add an empty paragraph to maintain the structure
+        element.innerHTML = '<p></p>';
     }
 }
 function setupDownloadButton() {
@@ -138,34 +138,38 @@ function setupDownloadButton() {
 }
 // Get PDF Version
 function printResumeToPDF() {
-    var printWindow = window.open('', '_blank');
-    if (printWindow) {
-        var resumeContainer = document.getElementById('resume-container');
-        var resumeContent = '';
-        if (resumeContainer) {
-            var clonedResume = resumeContainer.cloneNode(true);
-            clonedResume.querySelectorAll('.editable').forEach(function (el) {
-                el.classList.remove('editable');
-            });
-            var downloadButton = clonedResume.querySelector('#downloadButton');
-            if (downloadButton) {
-                downloadButton.remove();
+    var originalBody = document.body.innerHTML;
+    var resumeContainer = document.getElementById('resume-container');
+    if (resumeContainer) {
+        var printContent = document.createElement('div');
+        printContent.className = 'print-wrapper';
+        var resumeClone = resumeContainer.cloneNode(true);
+        printContent.appendChild(resumeClone);
+        document.body.innerHTML = '';
+        document.body.appendChild(printContent);
+        // print styles
+        var style_1 = document.createElement('style');
+        style_1.textContent = "\n            @media print {\n                @page {\n                    size: A4;\n                    margin: 0;\n                }\n                \n                * {\n                    -webkit-print-color-adjust: exact !important;\n                    print-color-adjust: exact !important;\n                }\n                \n                body {\n                    margin: 0;\n                    padding: 0;\n                    background: white;\n                }\n                \n                .print-wrapper {\n                    width: 210mm;\n                    min-height: 297mm;\n                    padding: 20mm;\n                    margin: 0 auto;\n                    background: white;\n                }\n                \n                #resume-container {\n                    width: 100% !important;\n                    margin: 0 !important;\n                    padding: 0 !important;\n                    box-shadow: none !important;\n                }\n                \n                .section {\n                    break-inside: avoid;\n                    page-break-inside: avoid;\n                }\n                \n                h1, h2, h3, h4, h5, h6 {\n                    break-after: avoid;\n                    page-break-after: avoid;\n                }\n                \n                img, svg {\n                    break-inside: avoid;\n                    page-break-inside: avoid;\n                }\n                \n                .profilePicture {\n                    max-width: 150px !important;\n                }\n                \n                #downloadButton, #shareButton, \n                .edit-button, .add-button,\n                .navbar, .footer {\n                    display: none !important;\n                }\n                \n                .editable {\n                    border: none !important;\n                }\n                \n                /* Preserve all colors and backgrounds */\n                * {\n                    color-adjust: exact !important;\n                    -webkit-print-color-adjust: exact !important;\n                }\n                \n                /* Preserve flex layouts */\n                .content-wrapper {\n                    display: flex !important;\n                    gap: 2rem !important;\n                }\n                \n                .left-column, .right-column {\n                    flex: 1 !important;\n                }\n                \n                /* Preserve text styles */\n                p, span, div {\n                    orphans: 3;\n                    widows: 3;\n                }\n                \n                /* Force background colors and images to print */\n                div {\n                    background-color: inherit !important;\n                }\n                \n                /* Ensure proper margin collapse */\n                * {\n                    margin-top: 0;\n                }\n            }\n        ";
+        document.head.appendChild(style_1);
+        // image loader Promise
+        var images = document.querySelectorAll('img');
+        Promise.all(Array.from(images).map(function (img) {
+            if (img.complete) {
+                return Promise.resolve();
             }
-            resumeContent = clonedResume.innerHTML;
-        }
-        printWindow.document.write("\n            <html>\n                <head>\n                    <title>Resume</title>\n                    <style>\n                        body {\n                            font-family: Arial, sans-serif;\n                            line-height: 1.6;\n                            color: #333;\n                            max-width: 800px;\n                            margin: 0 auto;\n                            padding: 20px;\n                        }\n                        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }\n                        h3 { color: #2980b9; }\n                        .profilePicture {\n                            max-width: 150px;\n                            border-radius: 50%;\n                            float: right;\n                            margin-left: 20px;\n                        }\n                    </style>\n                </head>\n                <body>\n                    ".concat(resumeContent, "\n                </body>\n            </html>\n        "));
-        printWindow.document.close();
-        printWindow.onload = function () {
+            return new Promise(function (resolve) {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        })).then(function () {
             setTimeout(function () {
-                printWindow.print();
-                printWindow.onafterprint = function () {
-                    printWindow.close();
-                };
-            }, 1000);
-        };
-    }
-    else {
-        alert('Please allow popups for this website to download the resume as PDF.');
+                window.print();
+                document.body.innerHTML = originalBody;
+                style_1.remove();
+                setupDownloadButton();
+                setupShareButton();
+            }, 200);
+        });
     }
 }
 function setupShareButton() {
@@ -182,7 +186,6 @@ function shareResume() {
     var education = getMultiEntryContent('education');
     var experience = getMultiEntryContent('experience');
     var skills = getMultiEntryContent('skills');
-    // Get the profile picture
     var profilePictureElement = document.getElementById('profilePicture');
     var profilePicture = profilePictureElement.src;
     var formData = new FormData();
@@ -193,7 +196,7 @@ function shareResume() {
     formData.append('education', JSON.stringify(education));
     formData.append('experience', JSON.stringify(experience));
     formData.append('skills', JSON.stringify(skills));
-    // Convert base64 image to file
+    // save image
     if (profilePicture.startsWith('data:image')) {
         var byteString = atob(profilePicture.split(',')[1]);
         var mimeString = profilePicture.split(',')[0].split(':')[1].split(';')[0];
@@ -205,7 +208,7 @@ function shareResume() {
         var blob = new Blob([ab], { type: mimeString });
         formData.append('profilePicture', blob, 'profile.jpg');
     }
-    // Send data to server
+    // node.js setting
     fetch('/api/share-resume', {
         method: 'POST',
         body: formData,

@@ -179,6 +179,11 @@ strong {
     text-decoration: none;
 }
 
+.resume-service{
+    text-align: center;
+    margin-left: 100px;
+    font-size: larger;
+}
 .nav-logo img {
     height: 40px;
     margin-right: 10px;
@@ -267,7 +272,7 @@ strong {
     }
 }
 
-/* Adjust body padding to account for fixed navbar */
+
 body {
     padding-top: 80px;
 }
@@ -384,7 +389,7 @@ body {
     }
 }
 
-/* Animation for social icons */
+/* Icons Effects */
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }

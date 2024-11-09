@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     populateElement('contactNo', 'contactno');
     populateElement('address', 'address');
 
-    // Handle multiple entries for education, experience, and skills
+    // entries for education, experience, and skills
     const populateMultipleEntries = (id: string, param: string) => {
         const element = document.getElementById(id);
         if (element) {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     populateMultipleEntries('experience', 'experience');
     populateMultipleEntries('skills', 'skills');
 
-    // Handle profile picture
+    // profile picture
     const profilePicture = document.getElementById('profilePicture') as HTMLImageElement;
     if (profilePicture) {
         const storedPicture = sessionStorage.getItem('profilePicture');
@@ -125,7 +125,7 @@ function addAddButton(element: HTMLElement) {
         const addButton = document.createElement('button');
         addButton.textContent = 'Add Entry';
         addButton.onclick = function(e) {
-            e.stopPropagation(); // Prevent triggering the element's click event
+            e.stopPropagation();
             const newInput = addInputField(element);
             newInput.focus();
         };
@@ -144,7 +144,7 @@ function updateMultiEntryField(element: HTMLElement) {
         .join('');
 
     if (entries.length === 0) {
-        element.innerHTML = '<p></p>'; // Add an empty paragraph to maintain the structure
+        element.innerHTML = '<p></p>'; 
     }
 }
 
@@ -157,67 +157,148 @@ function setupDownloadButton() {
 
 // Get PDF Version
 function printResumeToPDF() {
-    const printWindow = window.open('', '_blank');
     
-    if (printWindow) {
-        const resumeContainer = document.getElementById('resume-container');
-        let resumeContent = '';
+    const originalBody = document.body.innerHTML;
+    
+    
+    const resumeContainer = document.getElementById('resume-container');
+    
+    if (resumeContainer) {
+        const printContent = document.createElement('div');
+        printContent.className = 'print-wrapper';
         
-        if (resumeContainer) {
-            const clonedResume = resumeContainer.cloneNode(true) as HTMLElement;
-            clonedResume.querySelectorAll('.editable').forEach(function(el) {
-                el.classList.remove('editable');
-            });
-            const downloadButton = clonedResume.querySelector('#downloadButton');
-            if (downloadButton) {
-                downloadButton.remove();
+        const resumeClone = resumeContainer.cloneNode(true);
+        printContent.appendChild(resumeClone);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(printContent);
+
+        // print styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @media print {
+                @page {
+                    size: A4;
+                    margin: 0;
+                }
+                
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                
+                body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                }
+                
+                .print-wrapper {
+                    width: 210mm;
+                    min-height: 297mm;
+                    padding: 20mm;
+                    margin: 0 auto;
+                    background: white;
+                }
+                
+                #resume-container {
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    box-shadow: none !important;
+                }
+                
+                .section {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+                
+                h1, h2, h3, h4, h5, h6 {
+                    break-after: avoid;
+                    page-break-after: avoid;
+                }
+                
+                img, svg {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+                
+                .profilePicture {
+                    max-width: 150px !important;
+                }
+                
+                #downloadButton, #shareButton, 
+                .edit-button, .add-button,
+                .navbar, .footer {
+                    display: none !important;
+                }
+                
+                .editable {
+                    border: none !important;
+                }
+                
+                /* Preserve all colors and backgrounds */
+                * {
+                    color-adjust: exact !important;
+                    -webkit-print-color-adjust: exact !important;
+                }
+                
+                /* Preserve flex layouts */
+                .content-wrapper {
+                    display: flex !important;
+                    gap: 2rem !important;
+                }
+                
+                .left-column, .right-column {
+                    flex: 1 !important;
+                }
+                
+                /* Preserve text styles */
+                p, span, div {
+                    orphans: 3;
+                    widows: 3;
+                }
+                
+                /* Force background colors and images to print */
+                div {
+                    background-color: inherit !important;
+                }
+                
+                /* Ensure proper margin collapse */
+                * {
+                    margin-top: 0;
+                }
             }
-            resumeContent = clonedResume.innerHTML;
-        }
+        `;
+        document.head.appendChild(style);
 
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Resume</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            line-height: 1.6;
-                            color: #333;
-                            max-width: 800px;
-                            margin: 0 auto;
-                            padding: 20px;
-                        }
-                        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-                        h3 { color: #2980b9; }
-                        .profilePicture {
-                            max-width: 150px;
-                            border-radius: 50%;
-                            float: right;
-                            margin-left: 20px;
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${resumeContent}
-                </body>
-            </html>
-        `);
-
-        printWindow.document.close();
-
-        printWindow.onload = function() {
-            setTimeout(function() {
-                printWindow.print();
-                printWindow.onafterprint = function() {
-                    printWindow.close();
-                };
-            }, 1000);
-        };
-    } else {
-        alert('Please allow popups for this website to download the resume as PDF.');
+        // image loader Promise
+        const images = document.querySelectorAll('img');
+        Promise.all(Array.from(images).map(img => {
+            if (img.complete) {
+                return Promise.resolve();
+            }
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        })).then(() => {
+            
+            setTimeout(() => {
+                window.print();
+                
+                document.body.innerHTML = originalBody;
+                
+                style.remove();
+                
+                setupDownloadButton();
+                setupShareButton();
+            }, 200);
+        });
     }
 }
+
+
 
 function setupShareButton() {
     const shareButton = document.getElementById('shareButton');
@@ -236,7 +317,7 @@ function shareResume() {
     const experience = getMultiEntryContent('experience');
     const skills = getMultiEntryContent('skills');
 
-    // Get the profile picture
+    
     const profilePictureElement = document.getElementById('profilePicture') as HTMLImageElement;
     const profilePicture = profilePictureElement.src;
 
@@ -249,7 +330,7 @@ function shareResume() {
     formData.append('experience', JSON.stringify(experience));
     formData.append('skills', JSON.stringify(skills));
 
-    // Convert base64 image to file
+    // save image
     if (profilePicture.startsWith('data:image')) {
         const byteString = atob(profilePicture.split(',')[1]);
         const mimeString = profilePicture.split(',')[0].split(':')[1].split(';')[0];
@@ -262,7 +343,7 @@ function shareResume() {
         formData.append('profilePicture', blob, 'profile.jpg');
     }
 
-    // Send data to server
+    // node.js setting
     fetch('/api/share-resume', {
         method: 'POST',
         body: formData,
